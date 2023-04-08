@@ -16,7 +16,8 @@ async function savetocloud(event){
     if(Response.status===200){
       console.log(Response)
       alert('login sucessfull')
-      
+      localStorage.setItem('token',Response.data.token)
+    
     }
 
     if(Response.status===401){
