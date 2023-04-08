@@ -28,7 +28,7 @@ async function savetocloud(event){
         }
     
         else{
-            throw new Error('Failed to Logi')
+            throw new Error('Failed to Login')
         }
 
     }
