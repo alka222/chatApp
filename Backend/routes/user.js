@@ -10,6 +10,7 @@ router.post('/signup', userController.postSignup )
 router.post('/login', userController.postLogin )
 
 router.post('/postMessage', userAuthenticate.authentication, chatController.postMessage)
+router.get('/getMessage', userAuthenticate.authentication, chatController.getMessage)
 
 
 module.exports = router;

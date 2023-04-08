@@ -34,3 +34,23 @@ exports.postMessage= async(req, res, next) => {
     }
 }
 
+
+exports.getMessage = async(req,res,next)=>{
+
+    try {
+        let userId = req.user.id
+        console.log(userId)
+
+        const data = await Chat.findAll({where:{userId}});
+
+
+        res.status(200).json({data})
+    }
+    
+    catch (err) {
+        res.status(500).json({message:'unable to get chats'+err})
+    }
+
+
+} 
+

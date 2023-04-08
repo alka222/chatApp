@@ -1,3 +1,14 @@
+window.addEventListener('DOMContentLoaded', loadScreen)
+const token = localStorage.getItem('userToken');
+
+async function loadScreen(e){
+    e.preventDefault();
+
+    document.getElementById('username').innerHTML = 'user'
+    getMessage();
+
+    }
+
 
 document.getElementById('chat-form').onsubmit = async function(e){
     e.preventDefault();
@@ -22,3 +33,20 @@ document.getElementById('chat-form').onsubmit = async function(e){
         console.log(err);
     }
 }
+
+
+async function getMessage(){
+
+    try {
+        const token = localStorage.getItem('userToken');
+        const response =  await axios.get(`http://localhost:3000/user/getMessage`  , {headers:{"Authorization" : token}})
+        console.log(response.data);
+    }
+    
+    catch (err) {
+        console.log(err);
+    }
+}
+
+
+
