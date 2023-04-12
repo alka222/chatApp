@@ -6,7 +6,10 @@ const sequelize = require('./Backend/util/database')
 
 const User = require('./Backend/models/user')
 const Chat = require('./Backend/models/chat')
+const Group= require('./Backend/models/group')
+const UserGroup = require('./Backend/models/usergroup');
 const userRoutes = require('./Backend/routes/user')
+const groupRoutes = require('./Backend/routes/group')
 
 
 const app = express();
@@ -19,10 +22,18 @@ app.use(cors({
 
 app.use(bodyParser.json({extended:false}))
 
-app.use('/user',userRoutes)
 
 Chat.belongsTo(User);
 User.hasMany(Chat);
+
+Group.hasMany(Chat);
+Chat.belongsTo(Group);
+
+User.belongsToMany(Group , {through: UserGroup} )
+Group.belongsToMany(User , {through: UserGroup} )
+
+app.use('/user',userRoutes)
+app.use('/group',groupRoutes)
 
 sequelize.sync()
 .then(()=>{

@@ -114,7 +114,7 @@ function showChatsOnScreen(){
         else{
             let child = `<li class="clearfix" id=${chat.id}>
             <div class="message-data">
-                <span class="message-data-time">${localStorage.getItem('name')}</span>
+                <span class="message-data-time">${chat.name}</span>
                 <span class="message-data-time">${chat.createdAt.split('T')[1].slice(0,5)}</span>
             </div>
             <div class="message my-message">${chat.message}</div>
@@ -126,18 +126,6 @@ function showChatsOnScreen(){
         }
     })
 
-
-
-function ShowExpenses(user){
-    console.log(user)
-    let parentNode = chatContainer;
-    let childHTML = `<li id=${user.id}> ${user.amount}-${user.descip}-${user.category}
-        <button onclick=deleteUser('${user.id}')> Delete </button>
-        </li>`;
-  
-  
-    parentNode.innerHTML= parentNode.innerHTML+childHTML;
-    }
 
     document.getElementById(`${lastId}`).scrollIntoView()
     console.log(lastId)
