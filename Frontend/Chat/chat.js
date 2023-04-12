@@ -21,7 +21,7 @@ document.getElementById('chat-form').onsubmit = async function(e){
     e.preventDefault();
 
     const message = {
-        message: e.target.message.valu
+        message: e.target.message.value
     }
 
     console.log(message);
@@ -44,13 +44,22 @@ document.getElementById('chat-form').onsubmit = async function(e){
 
 async function getMessage(){
 
-    setInterval(async() => {
+    const messages = JSON.parse(localStorage.getItem(`msg`));
+    // console.log(messages[messages.length-1].id);
+    if(messages == undefined || messages.length == 0) {
+        lastId = 0;
+    }
+    else {
+        lastId = messages[messages.length-1].id;
+    }
+
+    // setInterval(async() => {
 
         try {
             const token = localStorage.getItem('userToken');
-            const response =  await axios.get(`http://localhost:3000/user/getMessage`  , {headers:{"Authorization" : token}})
-            console.log(response.data.data.arr)
-            var newArr = response.data.data.arr;
+            const response =  await axios.get(`http://localhost:3000/user/getMessage/?msg=${lastId}`  , {headers:{"Authorization" : token}})
+            console.log(response.data.data)
+            var newArr = response.data.data;
             console.log(newArr)
             saveToLocal(newArr);
         }
@@ -59,7 +68,7 @@ async function getMessage(){
             console.log(err);
         }
 
-    }, 1000)
+    // }, 1000)
 
 
 }
@@ -105,7 +114,7 @@ function showChatsOnScreen(){
         else{
             let child = `<li class="clearfix" id=${chat.id}>
             <div class="message-data">
-                <span class="message-data-time">${chat.name}</span>
+                <span class="message-data-time">${localStorage.getItem('name')}</span>
                 <span class="message-data-time">${chat.createdAt.split('T')[1].slice(0,5)}</span>
             </div>
             <div class="message my-message">${chat.message}</div>
@@ -116,5 +125,21 @@ function showChatsOnScreen(){
 
         }
     })
+
+
+
+function ShowExpenses(user){
+    console.log(user)
+    let parentNode = chatContainer;
+    let childHTML = `<li id=${user.id}> ${user.amount}-${user.descip}-${user.category}
+        <button onclick=deleteUser('${user.id}')> Delete </button>
+        </li>`;
+  
+  
+    parentNode.innerHTML= parentNode.innerHTML+childHTML;
+    }
+
+    document.getElementById(`${lastId}`).scrollIntoView()
+    console.log(lastId)
 
 }
