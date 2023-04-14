@@ -8,20 +8,22 @@ exports.postMessage= async(req, res, next) => {
         const {message} = req.body;
         console.log(req.user);
         console.log(message);
+        const groupId = req.params.groupId
 
-        if(!message){
+        if(!message || !groupId){
             return res.status(400).json({message: 'nothing entered'});
         }
 
-        const data = await req.user.createChat({message});
+        const data = await req.user.createChat({message, groupId});
         const name = req.user.name;
 
         const arr = [];
         const details = {
             id: data.id,
+            groupId:data.groupId,
             name: req.user.name,
             message: data.message,
-            creaatedAt: data.createdAt
+            createdAt: data.createdAt
         }
 
         arr.push(details);
@@ -38,15 +40,37 @@ exports.postMessage= async(req, res, next) => {
 exports.getMessage = async(req,res,next)=>{
 
     try {
-        let userId = req.user.id
-        let id = userId
-        console.log(userId)
+        let msgId = req.query.msg ; 
+        let groupId = req.params.groupId
+        console.log(groupId);
+        console.log('///////////////////////////',msgId)
 
-        const data = await Chat.findAll({where:{userId}});
-        const userData= await User.findAll({where:{id}})
+        const data = await Chat.findAll({where:{groupId}});
+        console.log(data.length);
+        let index = data.findIndex(chat => chat.id == msgId)
+        // console.log('.......................',index);
+        let messagestosend = data.slice(index+1)
+        console.log(messagestosend)
+        
 
+        let arr = [];
 
-        res.status(200).json({data,userData});
+        for(let i = 0 ; i<messagestosend.length ; i++){
+
+            const user = await User.findByPk(messagestosend[i].userId);
+
+            const details = {
+                id :messagestosend[i].id ,
+                groupId:messagestosend[i].groupId,
+                name:user.name ,
+                message:messagestosend[i].message,
+                createdAt:messagestosend[i].createdAt
+            }
+
+            arr.push(details)
+        }
+
+        res.status(200).json({arr})
     }
     
     catch (err) {

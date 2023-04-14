@@ -10,6 +10,7 @@ const Group= require('./Backend/models/group')
 const UserGroup = require('./Backend/models/usergroup');
 const userRoutes = require('./Backend/routes/user')
 const groupRoutes = require('./Backend/routes/group')
+const messageRoutes = require('./Backend/routes/message')
 
 
 const app = express();
@@ -34,6 +35,7 @@ Group.belongsToMany(User , {through: UserGroup} )
 
 app.use('/user',userRoutes)
 app.use('/group',groupRoutes)
+app.use('/message',messageRoutes)
 
 sequelize.sync()
 .then(()=>{

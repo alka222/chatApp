@@ -18,7 +18,7 @@ async function savetocloud(event){
       alert('login sucessfull')
       localStorage.setItem('userToken',Response.data.token)
       localStorage.setItem('name' , Response.data.name)
-      window.location.href='../Chat/chat.html'
+      window.location.href='../Group/group.html'
     
     }
 
