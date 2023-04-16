@@ -2,6 +2,8 @@ const token = localStorage.getItem('userToken');
 
 const chatContainer = document.querySelector('.chat-history');
 const userParent = document.getElementById('group');
+const file = document.getElementById('uploadFileInput');
+
 const User = localStorage.getItem('name');
 const groupId = localStorage.getItem('groupId');
 const groupName = localStorage.getItem('groupName');
@@ -52,7 +54,8 @@ async function loadScreen(e){
         e.preventDefault();
         
         const message = {
-            message : e.target.message.value
+            message : e.target.message.value,
+            file: e.target.uploadFileInput.value
         }
         try {
 
@@ -60,6 +63,8 @@ async function loadScreen(e){
             console.log(response.data.arr);
     
             e.target.message.value = ""
+            e.target.uploadFileInput.value = ""
+            
             saveToLocal(response.data.arr);
             
         } catch (err) {
@@ -114,12 +119,14 @@ function saveToLocal(arr){
 function showChatsOnScreen(){
 
     chatContainer.innerHTML = ""
+    console.log(chatArray)
 
     chatArray.forEach(chat =>{
-
+        console.log(chat.imageUrl)
         if(User == chat.name){
-            
-            let child = `<ul class="m-b-0">
+
+            if(chat.imageUrl == ""){
+                let child = `<ul class="m-b-0">
             <li class="clearfix" id=${chat.id}>
             <div class="message-data text-right">
                 <span class="message-data-time">${chat.name}</span>
@@ -129,11 +136,30 @@ function showChatsOnScreen(){
                 <div class="message other-message float-right">${chat.message}</div>
             </li>
         </ul>`
+            chatContainer.innerHTML += child
 
-          chatContainer.innerHTML += child
+            }
+            
+            if(chat.message == ""){
+                let child = `<ul class="m-b-0">
+            <li class="clearfix" id=${chat.id}>
+            <div class="message-data text-right">
+                <span class="message-data-time">${chat.name}</span>
+                <span class="message-data-time">${chat.createdAt.split('T')[1].slice(0,5)}</span>
+                
+            </div>
+                <div class="message other-message float-right"><a href="${chat.imageUrl}">download file</a></div>
+            </li>
+        </ul>`
+            chatContainer.innerHTML += child
+            }
+    
+
+          
         }
         else{
-            let child = `<ul class="m-b-0">
+            if(chat.imageUrl == ""){
+                let child = `<ul class="m-b-0">
             <li class="clearfix" id=${chat.id}>
             <div class="message-data">
             <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
@@ -146,6 +172,23 @@ function showChatsOnScreen(){
         </ul>`
 
           chatContainer.innerHTML += child
+            }
+            
+            if(chat.message == ""){
+                let child = `<ul class="m-b-0">
+            <li class="clearfix" id=${chat.id}>
+            <div class="message-data">
+            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
+                <span class="message-data-time">${chat.name}</span>
+                <span class="message-data-time">${chat.createdAt.split('T')[1].slice(0,5)}</span>
+                
+            </div>
+                <div class="message my-message"><a href="${chat.imageUrl}">download file</a></div>
+            </li>
+        </ul>`
+
+          chatContainer.innerHTML += child
+            }
 
 
         }

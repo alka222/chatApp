@@ -1,20 +1,49 @@
 const User = require('../models/user');
 const Chat = require('../models/chat');
+const s3Service = require('../services/s3Service')
 
 exports.postMessage= async(req, res, next) => {
 
     try{
 
-        const {message} = req.body;
+        const {message, file} = req.body;
         console.log(req.user);
         console.log(message);
+        console.log(file);
+
         const groupId = req.params.groupId
 
-        if(!message || !groupId){
+        const date = new Date();
+        const fileName = `Photo_${date}_${req.user}_${groupId}_${file}`;
+        
+        if(file == ""){
+            const fileURL = "";
+
+            const data = await req.user.createChat({message, imageUrl: fileURL, groupId});
+            const name = req.user.name;
+
+            const arr = [];
+            const details = {
+            id: data.id,
+            groupId:data.groupId,
+            name: req.user.name,
+            message: data.message,
+            imageUrl: fileURL,
+            createdAt: data.createdAt
+        }
+
+        arr.push(details);
+        return res.status(201).json({arr, message: 'chat message successfully added'});
+        }
+
+        const fileURL = await s3Service.uploadToS3(file, fileName);
+        console.log(fileURL)
+
+        if(!message && !groupId || !file && !groupId ){
             return res.status(400).json({message: 'nothing entered'});
         }
 
-        const data = await req.user.createChat({message, groupId});
+        const data = await req.user.createChat({message, imageUrl: fileURL, groupId});
         const name = req.user.name;
 
         const arr = [];
@@ -23,6 +52,7 @@ exports.postMessage= async(req, res, next) => {
             groupId:data.groupId,
             name: req.user.name,
             message: data.message,
+            imageUrl: fileURL,
             createdAt: data.createdAt
         }
 
@@ -64,6 +94,7 @@ exports.getMessage = async(req,res,next)=>{
                 groupId:messagestosend[i].groupId,
                 name:user.name ,
                 message:messagestosend[i].message,
+                imageUrl:messagestosend[i].imageUrl,
                 createdAt:messagestosend[i].createdAt
             }
 
@@ -80,3 +111,27 @@ exports.getMessage = async(req,res,next)=>{
 
 } 
 
+// exports.postUploadFile = async (req, res) => {
+//     try{
+//         console.log(req);
+//         const userId = req.user.id;
+//         const groupId = req.params.groupId;
+//         const file =req.body.uploadFileInput
+//         console.log(req.body);
+//         const date = new Date();
+//         const fileName = `Photo_${date}_${userId}_${groupId}_${file}`;
+        
+//         const fileURL = await s3Service.uploadToS3(file, fileName);
+
+//         const chat = await req.user.createChat({
+//             imageUrl: fileURL,
+//             userId,
+//             groupId,
+//         });
+//         res.json({data:chat,data1: req.user})
+//     }
+//     catch(err)
+//     {
+//         console.log(err);
+//     }
+// }

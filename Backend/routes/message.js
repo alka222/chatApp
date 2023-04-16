@@ -9,4 +9,5 @@ router.post('/postMessage/:groupId', userAuthenticate.authentication , chatContr
 
 router.get('/getMessage/:groupId', userAuthenticate.authentication , chatController.getMessage )
 
+
 module.exports = router;
